@@ -1,9 +1,12 @@
-import { createStore } from "vuex";
+import { createPinia } from "pinia"
+export const pinia = createPinia()
+import { defineStore } from "pinia";
 
-export default createStore({
-  state: {},
-  getters: {},
-  mutations: {},
-  actions: {},
-  modules: {},
-});
+const chat = defineStore('chatStore', {
+  state:()=>{
+    return {
+
+    }
+  }
+})
+export default chat
