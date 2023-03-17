@@ -18,6 +18,6 @@
   }
 }
 .home{
-  background: no-repeat center/100% url('@/assets/bgImage.jpg'),;
+  // background: no-repeat center/100% url('@/assets/bgImage.jpg'),;
 }
 </style>

@@ -5,5 +5,11 @@ import {pinia} from "./store";
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import "./css/tailwindcss.css"
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
-createApp(App).use(pinia).use(router).use(ElementPlus).mount("#app");
+
+const app = createApp(App)
+app.use(pinia).use(router).use(ElementPlus).mount("#app");
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component)
+}
