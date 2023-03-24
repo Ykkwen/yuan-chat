@@ -19,8 +19,12 @@ const io = require('socket.io')(server,{
 io.on('connection',(socket)=>{
   console.log('建立连接了',socket.id);
   socket.emit("hello", "hallo,客户端");
-  socket.on('sendMsg-to-server',(data)=>{
+  socket.on('sendMsg-to-group',(data)=>{
     console.log('收到客户端消息',data)
+    io.emit('sendMsg-to-group',data)
+  })
+  socket.on('disconnect',()=>{
+    console.log('有用户断开连接')
   })
 })
 

@@ -1,6 +1,6 @@
 <template>
   <div class="w-full pl-1 pr-2 flex-1 overflow-auto">
-    <template v-for="(item) in friendList">
+    <template v-for="(item) in showList">
       <div
         class="h-12 p-3 mb-1 flex cursor-pointer rounded-lg justify-start items-center bg-black bg-opacity-10 hover:bg-slate-900"
         @click="openChatWindow(item.id as number)" draggable="true">
@@ -26,18 +26,23 @@ const props = defineProps<{
 // const userStore = useUserStore()
 // const {user} = storeToRefs(userStore)
 const friendList: Ref<Array<UserInfo>> = ref([])
-watch(() => props.type, async () => {
+const groupList: any = ref([])
+const showList:any = ref([])
+  watch(() => props.type, async () => {
   if (props.type === 'USER') {
     friendList.value = await useFriend().saveFriendList()
+    showList.value = friendList.value
     console.log('getfriend', friendList)
+  } else if (props.type === 'GROUP') {
+    groupList.value = []
+    showList.value = groupList.value
   }
 }, { immediate: true })
 const openChatWindow = (friendId:number) => {
   if (props.type === 'USER') {
     router.replace(`/userWindow/${friendId}`)
-  } else if (props.type === 'GROUP') {
-    router.replace('/groupWindow/1')
-  }
+  } 
+  
 }
 
 

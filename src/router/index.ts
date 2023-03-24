@@ -10,7 +10,7 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import("../views/userChatWindow.vue"),
       },
       {
-        path: "/groupWindow/:groupId",
+        path: "/groupWindow/:groupId?",
         component: () => import("../views/groupChatWindow.vue"),
       },
     ],

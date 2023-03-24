@@ -9,7 +9,7 @@ const router = new Router({
 router.get('/friend_list',async (ctx)=>{
   const {id} = ctx.request.query
   const sql = `select * from user where id!='${id}'`
-  console.log(sql)
+  // console.log(sql)
   const sqlRes = await new Promise((resolve, reject)=>{
     db.query(sql, (err,data)=>{
       if(err) reject(err)

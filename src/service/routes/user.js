@@ -13,7 +13,7 @@ router.post('/login', async (ctx)=>{
   const loginRes = await new Promise((resolve, reject)=>{
     db.query(loginSql, (err,data)=>{
       if(err) reject(err)
-      console.log(data)
+      // console.log(data)
       resolve(data)
     })
   })
@@ -73,7 +73,7 @@ router.post('/updateUser', async (ctx)=>{
   const updateRes = await new Promise((resolve, reject)=>{
     db.query(updateSql, (err,data)=>{
       if(err) reject(err)
-      console.log(data)
+      // console.log(data)
       resolve(data)
     })
   })
@@ -94,11 +94,10 @@ router.post('/updateUser', async (ctx)=>{
 router.get('/getUserById',async (ctx)=>{
   const {id} = ctx.request.query
   const sql = `select * from user where id='${id}'`
-  console.log(sql)
   const sqlRes = await new Promise((resolve,reject)=>{
     db.query(sql,(err,data)=>{
       if(err) reject(err)
-      console.log(data)
+      // console.log(data)
       resolve(data)
     })
   })

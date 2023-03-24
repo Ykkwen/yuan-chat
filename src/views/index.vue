@@ -8,7 +8,7 @@
 			<el-icon color="#fff" class="side-icon" @click="currentType = 'USER'" size="40">
 				<User />
 			</el-icon>
-			<el-icon color="#fff" class="side-icon" @click="currentType = 'GROUP'" size="40">
+			<el-icon color="#fff" class="side-icon" @click="clickGroup" size="40">
 				<!-- <HomeFilled /> -->
 				<House />
 			</el-icon>
@@ -42,6 +42,7 @@ import { Ref, ref } from 'vue';
 import { useUserStore } from '@/store/user';
 import { storeToRefs } from 'pinia';
 import { LoginFormType, UserInfo } from '@/api/user';
+import router from '@/router';
 const userStore = useUserStore()
 const currentType = ref('USER')
 const infoDialog = ref()
@@ -56,6 +57,10 @@ console.log(user)
 userInfo.value = user.value
 const openDialog = () => {
 	infoDialog.value.open()
+}
+const clickGroup = ()=>{
+	currentType.value = 'GROUP'
+	// router.replace('/groupWindow')
 }
 </script>
 

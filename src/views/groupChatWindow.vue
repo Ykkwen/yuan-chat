@@ -1,10 +1,8 @@
 <template>
   <div class="h-12 flex justify-between items-center pl-5 pr-5 pt-1 pb-1 border-b-2 border-b-slate-400">
     <el-popover trigger="click" placement="bottom" title="" :width="150">
-      昵称: 元 <br>
-      性别: 男 <br>
-      地址: 上海 <br>
-      邮箱: 123@qq.com <br>
+      昵称: 前端已死 <br>
+      群人数: 3 <br>
       <template #reference>
         <div class="h-full flex items-center">
           <img class="h-full rounded-full mr-3 hover:cursor-pointer" src="@/assets/avatar2.jpg" alt="">
@@ -43,28 +41,30 @@ import { Ref, ref } from 'vue';
 import { msgType } from '@/type';
 import { useRoute } from 'vue-router';
 import { io } from "socket.io-client";
+import { useUserStore } from '@/store/user';
 const message = ref('')
-const userId = 0
+const userId = useUserStore().user.id
 const route = useRoute()
 const params = route.params
 const socket = io('http://localhost:3000', {
   transports: ['websocket']
 });
 socket.on('connect', function () {
-  console.log('客户端和服务建立了连接', socket.id)
+  console.log('客户端和服务建立了连接xxx', socket.id)
 })
-socket.on("hello", (arg) => {
-  console.log(arg);
+socket.on("sendMsg-to-group", (msg) => {
+  console.log('sd',msg);
+  dialogData.value.push(msg)
 });
 socket.on("disconnect", () => {
   console.log('断开连接'); // undefined
 });
 const dialogData: Ref<Array<msgType>> = ref([
-  {
-    id: 0,
-    content: '测试内容',
-    sendTime: '2023/03/03 13:58',
-  }
+  // {
+  //   id: 0,
+  //   content: '测试内容',
+  //   sendTime: '2023/03/03 13:58',
+  // }
 ])
 const cleanMsg = () => {
   console.log('清空')
@@ -86,9 +86,9 @@ const sendMsg = () => {
     senderId: userId,
     sendTime: DateTransform(new Date())
   }
-  socket.emit('sendMsg-to-server', msgObj)
-  dialogData.value.push(msgObj)
-  console.log(msgObj)
+  socket.emit('sendMsg-to-group', msgObj)
+  // dialogData.value.push(msgObj)
+  // console.log(msgObj)
   message.value = ''
 }
 </script>
