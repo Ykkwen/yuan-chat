@@ -3,4 +3,5 @@ export type msgType = {
   content?: string,
   senderId?: string | number,
   sendTime?: string,
+  receiverId?: number
 };

@@ -50,7 +50,7 @@ const socket = io('http://localhost:3000', {
   transports: ['websocket']
 });
 socket.on('connect', function () {
-  console.log('客户端和服务建立了连接xxx', socket.id)
+  console.log('客户端和服务建立了连接x', socket.id)
 })
 socket.on("sendMsg-to-group", (msg) => {
   console.log('sd',msg);

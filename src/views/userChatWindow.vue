@@ -18,7 +18,7 @@
     </div> -->
   </div>
   <div class="w-full h-2/3 border-b-2 border-b-slate-400 pl-5 pr-5 overflow-auto">
-    <template v-for=" item in dialogData" :key="item.id">
+    <template v-for=" item in computedDialog" :key="item.id">
       <MessageFromOther v-if="item.senderId !== userId" :msg-obj="item"></MessageFromOther>
       <MessageFromMe v-else :msg-obj="item"></MessageFromMe>
     </template>
@@ -39,46 +39,59 @@ import MessageFromOther from '@/components/Message/MessageFromOther.vue';
 import MessageFromMe from '@/components/Message/MessageFromMe.vue';
 import { reqUserById } from '@/api/user'
 import { DateTransform } from '@/utils/DateTransform'
-import { Ref, ref, watch } from 'vue';
+import { computed, Ref, ref, watch } from 'vue';
 import { msgType } from '@/type';
 import { useRoute } from 'vue-router';
 import { io } from "socket.io-client";
 import { useUserStore } from '@/store/user';
 import {UserInfo} from '@/api/user'
 const message = ref('')
-const userId = useUserStore().user.id
+const userId = useUserStore().user.id as number|string
 const route = useRoute()
 const friendId = ref()
 const friendInfo:Ref<UserInfo> = ref({})
+const friendSocketId = ref('')
 watch(() => route.params.userId, () => {
-  friendId.value = route.params.userId as string|number
+  friendId.value = Number(route.params.userId) as number
   reqUserById({ id: friendId.value }).then(res => {
     // console.log(res)
     friendInfo.value = res.data.data
   })
 },{immediate: true})
-
+const messageBox:Ref<any> = ref({})
+  console.log(friendId)
+const computedDialog = computed(()=>{return (messageBox.value[userId]&&friendId.value) ? messageBox.value[userId].filter((item: { senderId: Ref<any>; receiverId: Ref<any>; })=>item.senderId==friendId.value||item.receiverId==friendId.value) : []})
+watch(()=>computedDialog.value,()=>{
+  console.log(computedDialog)
+})
 const socket = io('http://localhost:3000', {
-  transports: ['websocket']
+  transports: ['websocket'],
+  query: {
+    username: useUserStore().user.nickname,
+    userId
+  }
 });
 socket.on('connect', function () {
   console.log('客户端和服务建立了连接', socket.id)
 })
-socket.on("hello", (arg) => {
-  console.log(arg);
-});
+const onlineList = ref([])
+socket.on('online',(data)=>{
+  onlineList.value = data
+  console.log('在线列表',onlineList.value)
+  friendSocketId.value = data.filter((item:any)=>item.userId==friendId.value)[0].socketId
+  console.log('friendSocketId',friendSocketId.value)
+})
+socket.on('receive-from-one', function (data) {
+  console.log('receive-from-one',data)
+  !messageBox.value[userId]&&(messageBox.value[userId] = [])
+  messageBox.value[userId].push(data)
+  console.log(messageBox)
+})
+
 socket.on("disconnect", () => {
   console.log('断开连接'); // undefined
 });
-const dialogData: Ref<Array<msgType>> = ref([
-  {
-    id: 0,
-    content: '测试内容',
-    sendTime: '2023/03/03 13:58',
-  }
-])
 const cleanMsg = () => {
-  console.log('清空')
   message.value = ''
 }
 const enterInput = (e: KeyboardEvent) => {
@@ -95,11 +108,12 @@ const sendMsg = () => {
     id: Date.now(),
     content: message.value,
     senderId: userId,
+    receiverId: friendId.value,
     sendTime: DateTransform(new Date())
   }
-  socket.emit('sendMsg-to-server', msgObj)
-  dialogData.value.push(msgObj)
-  console.log(msgObj)
+  !messageBox.value[userId]&&(messageBox.value[userId] = [])
+  messageBox.value[userId].push(msgObj)
+  socket.emit('sendMsg-to-one', {toSocketId: friendSocketId.value, msgObj})
   message.value = ''
 }
 </script>
